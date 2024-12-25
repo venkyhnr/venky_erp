@@ -156,11 +156,11 @@
                                             <th>Select</th>
                                             <th>Enquiry Id</th>
                                             <th>Date</th>
-                                            <th>Name</th>
-                                            <th>Contact</th>
-                                            <th>Mobile</th>
-                                            <th>Sales Person</th>
-                                            <th>Email</th>
+                                            <th>Client Name</th>
+                                            <th>Contact Person</th>
+                                            <th>Client Mobile</th>
+                                            {{-- <th>Sales Person</th> --}}
+                                            <th>Client Email</th>
                                             {{-- <th>Handled By</th> --}}
                                             @if($get_user_data->role_id != '7')
                                             <th>Survey</th>
@@ -191,15 +191,15 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if ($followup->company_name != '')
-                                                             {{ $followup->company_name }}
+                                                    @if ($followup->agent_id != '')
+                                                             {{ Helper::getOrganizationName($followup->agent_id) }}
                                                     @else
                                                         {{ '-' }}
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if ($followup->customer_name != '')
-                                                             {{ $followup->customer_name }}
+                                                    @if ($followup->agent_attr_id != '')
+                                                             {{ Helper::getOrganizationContactName($followup->agent_attr_id) }}
                                                     @else
                                                         {{ '-' }}
                                                     @endif
@@ -211,9 +211,9 @@
                                                         {{ '-' }}
                                                     @endif
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     {!! Helper::salesmanname($followup->salesman_id) !!}
-                                                </td>
+                                                </td> --}}
                                                 <td>
                                                     @if ($followup->customer_email != '')
                                                              {{ $followup->customer_email }}

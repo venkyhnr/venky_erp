@@ -42,6 +42,12 @@
                             request()->segment(1) == 'service' ? 'active' : '' }}">
                     <i data-feather="pie-chart"></i> <span>Master</span> <span class="menu-arrow"></span></a>
                 <ul>
+                    @if (in_array('7', $permission1))
+                        <li class="{{ request()->segment(1) == 'branch' ? 'active' : '' }}">
+                            <a href="{{ route('branch.index') }}"
+                                class="{{ request()->segment(1) == 'branch' ? 'active' : '' }}">Branch</a>
+                        </li>
+                    @endif
                     @if (in_array('3', $permission1))
                         <li class="{{ request()->segment(1) == 'country' ? 'active' : '' }}">
                             <a href="{{ route('country.index') }}"
@@ -60,34 +66,53 @@
                             class="{{ request()->segment(1) == 'customer_type' ? 'active' : '' }}">Customer Type</a>
                     </li>
                     @endif
+                    @if (in_array('17', $permission1))
+                        <li class="{{ request()->segment(1) == 'industry-type' ? 'active' : '' }}">
+                            <a href="{{ route('industry-type.index') }}"
+                                class="{{ request()->segment(1) == 'industry-type' ? 'active' : '' }}">Industry Type</a>
+                        </li>
+                    @endif
+                    @if (in_array('19', $permission1))
+                        <li class="{{ request()->segment(1) == 'approved-agents' ? 'active' : '' }}">
+                            <a href="{{ route('approved-agents.index') }}"
+                                class="{{ request()->segment(1) == 'approved-agents' ? 'active' : '' }}">Approved Agents</a>
+                        </li>
+                    @endif
+                    @if (in_array('18', $permission1))
+                        <li class="{{ request()->segment(1) == 'reference' ? 'active' : '' }}">
+                            <a href="{{ route('reference.index') }}"
+                                class="{{ request()->segment(1) == 'reference' ? 'active' : '' }}">Reference</a>
+                        </li>
+                    @endif
                     @if (in_array('6', $permission1))
                         <li class="{{ request()->segment(1) == 'service' ? 'active' : '' }}">
                             <a href="{{ route('service.index') }}"
                                 class="{{ request()->segment(1) == 'service' ? 'active' : '' }}">Service</a>
                         </li>
                     @endif
-                    @if (in_array('7', $permission1))
-                        <li class="{{ request()->segment(1) == 'branch' ? 'active' : '' }}">
-                            <a href="{{ route('branch.index') }}"
-                                class="{{ request()->segment(1) == 'branch' ? 'active' : '' }}">Branch</a>
-                        </li>
-                    @endif
+
                     @if (in_array('8', $permission1))
                     <li class="{{ request()->segment(1) == 'surveyor_type' ? 'active' : '' }}">
                         <a href="{{ route('surveyor_type.index') }}"
-                            class="{{ request()->segment(1) == 'surveyor_type' ? 'active' : '' }}">Surveyor Type</a>
+                            class="{{ request()->segment(1) == 'surveyor_type' ? 'active' : '' }}">Survey Type</a>
                     </li>
-                     @endif
-                    @if (in_array('9', $permission1))
-                        <li class="{{ request()->segment(1) == 'surveyor_time_zone' ? 'active' : '' }}">
-                            <a href="{{ route('surveyor_time_zone.index') }}"
-                                class="{{ request()->segment(1) == 'surveyor_time_zone' ? 'active' : '' }}">Surveyor Time Zone</a>
-                        </li>
                     @endif
                     @if (in_array('10', $permission1))
                         <li class="{{ request()->segment(1) == 'storage_type' ? 'active' : '' }}">
                             <a href="{{ route('storage_type.index') }}"
                                 class="{{ request()->segment(1) == 'storage_type' ? 'active' : '' }}">Storage Type</a>
+                        </li>
+                    @endif
+                    @if (in_array('20', $permission1))
+                        <li class="{{ request()->segment(1) == 'frequencies' ? 'active' : '' }}">
+                            <a href="{{ route('frequencies.index') }}"
+                                class="{{ request()->segment(1) == 'frequencies' ? 'active' : '' }}">Frequency</a>
+                        </li>
+                    @endif
+                    @if (in_array('21', $permission1))
+                        <li class="{{ request()->segment(1) == 'durations' ? 'active' : '' }}">
+                            <a href="{{ route('durations.index') }}"
+                                class="{{ request()->segment(1) == 'durations' ? 'active' : '' }}">Duration</a>
                         </li>
                     @endif
                     @if (in_array('11', $permission1))
@@ -102,34 +127,10 @@
                                 class="{{ request()->segment(1) == 'enquiry_mode' ? 'active' : '' }}">Enquiry Mode</a>
                         </li>
                     @endif
-                    @if (in_array('17', $permission1))
-                        <li class="{{ request()->segment(1) == 'industry-type' ? 'active' : '' }}">
-                            <a href="{{ route('industry-type.index') }}"
-                                class="{{ request()->segment(1) == 'industry-type' ? 'active' : '' }}">Industry Type</a>
-                        </li>
-                    @endif
-                    @if (in_array('18', $permission1))
-                        <li class="{{ request()->segment(1) == 'reference' ? 'active' : '' }}">
-                            <a href="{{ route('reference.index') }}"
-                                class="{{ request()->segment(1) == 'reference' ? 'active' : '' }}">Reference</a>
-                        </li>
-                    @endif
-                    @if (in_array('19', $permission1))
-                        <li class="{{ request()->segment(1) == 'approved-agents' ? 'active' : '' }}">
-                            <a href="{{ route('approved-agents.index') }}"
-                                class="{{ request()->segment(1) == 'approved-agents' ? 'active' : '' }}">Approved Agents</a>
-                        </li>
-                    @endif
-                    @if (in_array('20', $permission1))
-                        <li class="{{ request()->segment(1) == 'frequencies' ? 'active' : '' }}">
-                            <a href="{{ route('frequencies.index') }}"
-                                class="{{ request()->segment(1) == 'frequencies' ? 'active' : '' }}">Frequency</a>
-                        </li>
-                    @endif
-                    @if (in_array('21', $permission1))
-                        <li class="{{ request()->segment(1) == 'durations' ? 'active' : '' }}">
-                            <a href="{{ route('durations.index') }}"
-                                class="{{ request()->segment(1) == 'durations' ? 'active' : '' }}">Duration</a>
+                    @if (in_array('9', $permission1))
+                        <li class="{{ request()->segment(1) == 'surveyor_time_zone' ? 'active' : '' }}">
+                            <a href="{{ route('surveyor_time_zone.index') }}"
+                                class="{{ request()->segment(1) == 'surveyor_time_zone' ? 'active' : '' }}">Surveyor Time Zone</a>
                         </li>
                     @endif
                 </ul>
