@@ -228,4 +228,21 @@ public static function getusername(int $userid)
             return false;
         }
     }
+
+    public static function getOrganizationName(int $id){
+        $result = DB::table('agents')->where('id',$id)->value('company_name');
+        if ($result !="") {
+            return $result;
+        } else {
+            return '-';
+        }
+    }
+    public static function getOrganizationContactName(int $agent_attr_id){
+        $result = DB::table('agents_attribute')->where('id',$agent_attr_id)->value('name');
+        if ($result !="") {
+            return $result;
+        } else {
+            return '-';
+        }
+    }
 }

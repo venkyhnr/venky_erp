@@ -10,6 +10,12 @@
     #allowance_table{
         width: 50%;
     }
+    .checkbox-color{
+        color: #0f548e !important;
+    }
+    input[type="checkbox"] {
+        accent-color: #0f548e; /* Set the desired color */
+    }
     </style>
     <div class="content container-fluid">
         <!-- Page Header -->
@@ -50,18 +56,6 @@
                             @csrf
                             <div class="row">
                                 <div class="form-group col-lg-6">
-                                    <label for="name">Quote No</label>
-                                    <input id="quote_no" name="quote_no" type="input" class="form-control"
-                                        placeholder="Enter Quote No" value="{{ $quote_no }}" readonly />
-                                    @isset($agent_id)
-                                        <input id="agent_id" name="agent_id" type="hidden" value="{{ $agent_id }}" />
-                                    @endisset
-                                    @isset($attr_id)
-                                        <input id="attr_id" name="attr_id" type="hidden" value="{{ $attr_id }}" />
-                                    @endisset
-                                    <p class="form-error-text" id="quote_no_error" style="color: red;"></p>
-                                </div>
-                                <div class="form-group col-lg-6">
                                     <label for="name">Customer Type:</label>
                                     <select name="customer_type" id="customer_type" class="form-control form-select select">
                                         <option value="">Select Customer Type</option>
@@ -73,15 +67,6 @@
                                     </select>
                                     <p class="form-error-text" id="customer_type_error" style="color: red;"></p>
                                 </div>
-                                {{-- <div class="form-group col-lg-6">
-                                    <label for="country">Branch Country</label>
-                                    <select class="form-control form-select select" id="branch_country" name="branch_country">
-                                        <option value="">Select Country</option>
-                                        @foreach ($country_data as $country)
-                                            <option value="{{ $country->id }}">{{ $country->country }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> --}}
                                 <div class="form-group col-lg-6">
                                     <label for="name">Branch</label>
                                     <select name="branch" id="branch" class="form-control form-select select">
@@ -93,35 +78,63 @@
                                 </div>
                                 <div class="form-group col-lg-6">
                                     <label for="name">Enquiry Date</label>
-                                    <input id="enquiry_date" name="enquiry_date" type="date" class="form-control"
+                                    <input id="enquiry_date" name="enquiry_date" type="text" class="form-control"
                                         value="" placeholder="Enter Enquiry Date" />
                                     <p class="form-error-text" id="inquiry_date_error" style="color: red;"></p>
                                 </div>
+                                {{-- <div class="form-group col-lg-6">
+                                    <label for="name">Enquiry No</label>
+                                    <input id="quote_no" name="quote_no" type="input" class="form-control"
+                                        placeholder="Enter Quote No" value="{{ $quote_no }}" readonly />
+                                    @isset($agent_id)
+                                        <input id="agent_id" name="agent_id" type="hidden" value="{{ $agent_id }}" />
+                                    @endisset
+                                    @isset($attr_id)
+                                        <input id="attr_id" name="attr_id" type="hidden" value="{{ $attr_id }}" />
+                                    @endisset
+                                    <p class="form-error-text" id="quote_no_error" style="color: red;"></p>
+                                </div> --}}
+
+                                {{-- <div class="form-group col-lg-6">
+                                    <label for="country">Branch Country</label>
+                                    <select class="form-control form-select select" id="branch_country" name="branch_country">
+                                        <option value="">Select Country</option>
+                                        @foreach ($country_data as $country)
+                                            <option value="{{ $country->id }}">{{ $country->country }}</option>
+                                        @endforeach
+                                    </select>
+                                </div> --}}
+
+
                                 <div class="form-group col-lg-6">
                                 </div>
                                 @php
                                 $company_agent_data = DB::table('agents')->get();
                                 $agent_data = DB::table('agents_attribute')->get();
-                                // echo "<pre>"; print_r($company_name); echo "</pre>"; exit;
                                 @endphp
                                 <div class="form-group">
                                     <input type="checkbox" id="client_box" name="client_box" onchange="clientvisibility()" value="0">
-                                        <label for="client_box"><b>Client Details:</b></label>
+                                        <label for="client_box" ><b class="checkbox-color">Client Details:</b></label>
                                     </div>
                                 <div id="client_fields" class="hidden">
                                     <div class="row">
                                         <div class="form-group col-lg-6">
                                             <label for="name">Name:</label>
+                                            <select name="agent_id" id="agent_id" class="form-select select" onchange="getVendorDetails(this.value);">
+                                                <option value="">Select Name</option>
+                                                @foreach($organization_name as $agent_name)
+                                                <option value="{{ $agent_name->id }}">{{ $agent_name->company_name }}</option>
+                                                @endforeach
+                                            </select>
                                             <!-- Hidden input to store the company ID -->
-                                            <input type="hidden" id="company_name_id" name="company_name_id" value="{{ $company_name->id ?? '' }}" />
-                                            <input type="text"
+                                            {{-- <input type="text"
                                             @if(isset($company_name->company_name) && ($company_name != '' ))
                                             value="{{ $company_name->company_name}}"
                                             @else
                                             value= ""
                                             @endif
                                             id="company_name" class="form-control" name="company_name"
-                                            placeholder="Enter name">
+                                            placeholder="Enter name"> --}}
                                             <!-- Error text for company name -->
                                             <p class="form-error-text" id="company_name_error" style="color: red;"></p>
                                         </div>
@@ -139,6 +152,54 @@
                                                 style="color: red; margin-top: 10px;"></p>
                                         </div>
                                         <div class="form-group col-lg-6">
+                                            <label for="name">Phone:</label>
+                                            <input id="customer_phone2" name="customer_phone2" type="input"
+                                                class="form-control" placeholder="Enter Phone"
+                                                onkeypress="return validateNumber(event)" />
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label for="name">Contact Person:</label>
+                                            <div id="agent_att_replace">
+                                                <select name="agent_attr_id" id="agent_attr_id" class="form-control select">
+                                                    <option value="" selected>Select Contact Person</option>
+                                                    @foreach ($agent_data as $agent)
+                                                        <option value="{{ $agent->id }}" {{isset($agents_attr->name) && $agents_attr->customer_name == $agent->name ? 'selected' : '' }}>
+                                                            {{ $agent->name }}  @if($agent->role !="" && !empty($agent->role))( {{$agent->role}} )@endif
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            {{-- <input id="customer_name" name="customer_name" type="input" class="form-control"
+                                                placeholder="Enter Contact Name"
+                                                @isset($agents_attr->name) value="{{ $agents_attr->name }}" @endisset /> --}}
+                                            <p class="form-error-text" id="customer_name_error" style="color: red;"></p>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label for="name">Mobile:</label>
+                                            <input id="customer_phone1" name="customer_phone1" type="input"
+                                                class="form-control" placeholder="Enter Mobile"
+                                                onkeypress="return validateNumber(event)"
+                                                @isset($agents_attr->telephone) value="{{ $agents_attr->telephone }}" @endisset />
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label for="name">Email:</label>
+                                            <input id="customer_email" name="customer_email" type="input" class="form-control"
+                                                placeholder="Enter Email"
+                                                @isset($agents_attr->email) value="{{ $agents_attr->email }}" @endisset />
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <label for="name">Address:</label>
+                                            <textarea name="address" id="address" cols="5" rows="5" class="form-control"
+                                                placeholder="Enter Address"></textarea>
+                                            <p class="form-error-text" id="address_error" style="color: red;"></p>
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <label for="name">Associate:</label>
+                                            <input type="radio" name="associate" id="corporate" value="Corporate" onchange="customer_select(this.value);"> Corporate
+                                            <input type="radio" name="associate" id="customer" value="Customer" onchange="customer_select(this.value);"> Customer
+                                            <input type="radio" name="associate" id="none" value="None" onchange="customer_select(this.value);"> None
+                                        </div>
+                                       {{--  <div class="form-group col-lg-6">
                                             <label for="name">Organization attribute:</label>
                                         <div id="agent_att_replace">
                                            <select name="agent_attr_data" id="agent_attr_data" class="form-control select" onchange="agent_att_data_replace(this.value);">
@@ -150,34 +211,12 @@
                                             @endforeach
                                             </select>
                                         </div>
-                                        </div>
-                                    <div class="form-group col-lg-6">
-                                        <label for="name">Contact Person:</label>
-                                        <input id="customer_name" name="customer_name" type="input" class="form-control"
-                                            placeholder="Enter Contact Name"
-                                            @isset($agents_attr->name) value="{{ $agents_attr->name }}" @endisset />
-                                        <p class="form-error-text" id="customer_name_error" style="color: red;"></p>
-                                    </div>
-                                    <div class="form-group col-lg-6">
-                                        <label for="name">Mobile:</label>
-                                        <input id="customer_phone1" name="customer_phone1" type="input"
-                                            class="form-control" placeholder="Enter Mobile"
-                                            onkeypress="return validateNumber(event)"
-                                            @isset($agents_attr->telephone) value="{{ $agents_attr->telephone }}" @endisset />
-                                    </div>
-                                    <div class="form-group col-lg-6">
-                                        <label for="name">Phone:</label>
-                                        <input id="customer_phone2" name="customer_phone2" type="input"
-                                            class="form-control" placeholder="Enter Phone"
-                                            onkeypress="return validateNumber(event)" />
-                                    </div>
-                                    <div class="form-group col-lg-6">
-                                        <label for="name">Email:</label>
-                                        <input id="customer_email" name="customer_email" type="input" class="form-control"
-                                            placeholder="Enter Email"
-                                            @isset($agents_attr->email) value="{{ $agents_attr->email }}" @endisset />
-                                    </div>
-                                    <div class="form-group col-lg-6">
+                                        </div> --}}
+
+
+
+
+                                    {{-- <div class="form-group col-lg-6">
                                         <label for="name">Sales Person:</label>
                                         <select name="salesman_id" id="salesman_id" class="form-control select">
                                             <option value="">Select Sales Person</option>
@@ -188,65 +227,60 @@
                                         </select>
                                         <p class="form-error-text" id="salesman_id_error" style="color: red; margin-top: 10px;">
                                         </p>
-                                    </div>
-                                    <div class="form-group col-lg-12">
-                                        <label for="name">Address:</label>
-                                        <textarea name="address" id="address" cols="5" rows="5" class="form-control"
-                                            placeholder="Enter Address"></textarea>
-                                        <p class="form-error-text" id="address_error" style="color: red;"></p>
-                                    </div>
-                                    <div class="form-group col-lg-12">
-                                        <label for="name">Associate:</label>
-                                        <input type="radio" name="associate" id="corporate" value="Corporate" onchange="customer_select(this.value);"> Corporate
-                                        <input type="radio" name="associate" id="customer" value="Customer" onchange="customer_select(this.value);"> Customer
-                                        <input type="radio" name="associate" id="none" value="None" onchange="customer_select(this.value);"> None
-                                    </div>
+                                    </div> --}}
+
                                 </div>
                                 </div>
                                 <div class="radio_show hidden">
                                 <div class="form-group" >
                                     <input type="checkbox" id="customer_form" name="customer_form" onchange="individualvisibility()" value="0">
-                                        <label for="client"><b>Individual Details:</b></label>
+                                        <label for="client"><b class="checkbox-color">Individual Details:</b></label>
                                     </div>
                                     <div id="individual_fields" class="hidden">
                                         <div class="row">
-                                        <div class="form-group col-lg-6">
-                                            <label for="name">Title/Rank:</label>
-                                            <select name="customer_title_rank" id="customer_title_rank" class="form-control form-select select">
-                                                <option value="">Select Title/Rank</option>
-                                                @foreach($title_rank as $title_rank_data)
-                                                <option value="{{$title_rank_data->id}}">
-                                            {{$title_rank_data->title_rank}}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                            <p class="form-error-text" id="title_rank_error"
-                                                style="color: red; margin-top: 10px;"></p>
+                                            <div class="form-group col-lg-6">
+                                                <label for="name">Title/Rank:</label>
+                                                <select name="customer_title_rank" id="customer_title_rank" class="form-control form-select select">
+                                                    <option value="">Select Title/Rank</option>
+                                                    @foreach($title_rank as $title_rank_data)
+                                                    <option value="{{$title_rank_data->id}}">
+                                                {{$title_rank_data->title_rank}}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                                <p class="form-error-text" id="title_rank_error"
+                                                    style="color: red; margin-top: 10px;"></p>
+                                            </div>
                                         </div>
-                                        <div class="form-group col-lg-12">
-                                            <label for="name">First Name:</label>
-                                            <input type="text" name="f_name" id="f_name" class="form-control" placeholder="Enter First Name">
+                                        <div class="row">
+                                            <div class="form-group col-lg-3 col-xl-4">
+                                                <label for="name">First Name:</label>
+                                                <input type="text" name="f_name" id="f_name" class="form-control" placeholder="Enter First Name">
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label for="name">Middle Name:</label>
+                                                <input type="text" name="m_name" id="m_name" class="form-control" placeholder="Enter Middle Name">
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label for="name">Last Name:</label>
+                                                <input type="text" name="l_name" id="l_name" class="form-control" placeholder="Enter Last Name">
+                                            </div>
                                         </div>
-                                        <div class="form-group col-lg-12">
-                                            <label for="name">Middle Name:</label>
-                                            <input type="text" name="m_name" id="m_name" class="form-control" placeholder="Enter Middle Name">
+                                        <div class="row">
+                                            <div class="form-group col-lg-4">
+                                                <label for="name">Mobile:</label>
+                                                <input type="text" name="c_mobile" id="c_mobile" class="form-control" placeholder="Enter Mobile Number">
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label for="name">Phone:</label>
+                                                <input type="text" name="c_phone" id="c_phone" class="form-control" placeholder="Enter Phone Number">
+                                            </div>
+                                            <div class="form-group col-lg-4">
+                                                <label for="name">Email:</label>
+                                                <input type="text" name="c_email" id="c_email" class="form-control" placeholder="Enter Email">
+                                            </div>
                                         </div>
-                                        <div class="form-group col-lg-12">
-                                            <label for="name">Last Name:</label>
-                                            <input type="text" name="l_name" id="l_name" class="form-control" placeholder="Enter Last Name">
-                                        </div>
-                                        <div class="form-group col-lg-6">
-                                            <label for="name">Mobile:</label>
-                                            <input type="text" name="c_mobile" id="c_mobile" class="form-control" placeholder="Enter Mobile Number">
-                                        </div>
-                                        <div class="form-group col-lg-6">
-                                            <label for="name">Phone:</label>
-                                            <input type="text" name="c_phone" id="c_phone" class="form-control" placeholder="Enter Phone Number">
-                                        </div>
-                                        <div class="form-group col-lg-6">
-                                            <label for="name">Email:</label>
-                                            <input type="text" name="c_email" id="c_email" class="form-control" placeholder="Enter Email">
-                                        </div>
+                                        <div class="row">
                                         <div class="form-group col-lg-12">
                                             <label for="name">Address:</label>
                                             <input type="text" name="c_add" id="c_add" class="form-control" placeholder="Enter Address">
@@ -266,16 +300,16 @@
                                             <label for="name">City:</label>
                                             <input type="text" name="c_city" id="c_city" class="form-control" placeholder="Enter City">
                                         </div>
-                                </div>
+                                    </div>
                                 </div>
                                 </div>
                                 <div class="form-group" >
                                     <input type="checkbox" id="origin_desti_move" name="origin_desti_move" onchange="originmovevisibility()" value="0">
-                                        <label for="origin_desti_move"><b>Origin,Destination & Move Details:</b></label>
+                                        <label for="origin_desti_move"><b class="checkbox-color">Origin,Destination & Move Details:</b></label>
                                     </div>
                                     <div id="origin_desti_move_fields" class="hidden">
                                         <div class="row">
-                                            <div class="form-group col-lg-6">
+                                            <div class="form-group col-lg-4">
                                                 <label for="name">Service Type:</label>
                                                 <select name="service_id" id="service_id" class="form-control form-select select">
                                                     <option value=""> Select Services</option>
@@ -287,8 +321,7 @@
                                                 <p class="form-error-text" id="service_id_error" style="color: red; margin-top: 10px;">
                                                 </p>
                                             </div>
-                                            <div class="form-group col-lg-6"></div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="Surveyor">Service Required:</label>
                                                     <select name="service_required" id="service_required" class="form-control form-select select"
@@ -308,7 +341,7 @@
                                                         value="">
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                             <div class="form-group">
                                             <label for="Surveyor">Description Of Goods:</label>
                                             <select name="desc_of_goods" id="desc_of_goods" class="form-control form-select select"
@@ -326,35 +359,34 @@
                                                 value="">
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="survey_req">Survey Required ?</label>
-                                                    <input type="checkbox" id="survey_req" name="survey_req" value="0">
+                                                    <input type="checkbox" id="survey_req" name="survey_req" value="0" class="checkbox-color">
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                            </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
-                                                <label for="Surveyor">Survey Type:</label>
-                                                <select name="survey_type" id="survey_type" class="form-control form-select select" >
-                                                    <option value=""> Select Survey Type</option>
-                                                    @foreach ($surveyor_type as $surveyor_type_data)
-                                                        <option value="{{ $surveyor_type_data->id }}">
-                                                            {{ $surveyor_type_data->surveyor_type }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                                    <label for="Surveyor">Survey Type:</label>
+                                                    <select name="survey_type" id="survey_type" class="form-control form-select select" >
+                                                        <option value=""> Select Survey Type</option>
+                                                        @foreach ($surveyor_type as $surveyor_type_data)
+                                                            <option value="{{ $surveyor_type_data->id }}">
+                                                                {{ $surveyor_type_data->surveyor_type }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 <p class="form-error-text" id="survey_type_error"
                                                 style="color: red; margin-top: 10px;"></p>
                                                 </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="name">Survey Date:</label>
+                                                    <input type="date" name="s_date" id="s_date" class="form-control" placeholder="Enter Survey Date">
                                                 </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label for="name">Survey Date:</label>
-                                                <input type="date" name="s_date" id="s_date" class="form-control" placeholder="Enter Survey Date">
                                             </div>
-                                            </div>
+
                                     <div class="row">
                                         <div class="col-lg-6"><b>Origin:/Pick up</b>
                                             <div class="form-group ">
@@ -433,11 +465,11 @@
                                 </div>
                                 <div class="form-group" >
                                     <input type="checkbox" id="storage_details" name="storage_details" onchange="storagedetailvisibility()" value="0">
-                                        <label for="storage_details"><b>Storage Details:</b></label>
+                                        <label for="storage_details"><b class="checkbox-color">Storage Details:</b></label>
                                     </div>
                                     <div id="storage_details_fields" class="hidden">
                                     <div class="row">
-                                        <div class="form-group col-lg-6">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Storage Type:</label>
                                             <select name="storage_id" id="storage_id" class="form-control form-select select">
                                             <option value="">Select Storage Type</option>
@@ -448,7 +480,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="form-group col-lg-6">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Frequency:</label>
                                             <select name="frequency" id="frequency" class="form-control form-select select">
                                                 <option value="">Select Frequency</option>
@@ -461,7 +493,7 @@
                                             {{-- <input id="frequency" name="frequency" type="text" class="form-control"
                                             placeholder="Enter Frequency"/> --}}
                                         </div>
-                                        <div class="form-group col-lg-6">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Duration:</label>
                                             <select name="duration" id="duration" class="form-control form-select select">
                                                 <option value="">Select Duration</option>
@@ -474,13 +506,14 @@
                                             {{-- <input id="duration" name="duration" type="text" class="form-control"
                                             placeholder="Enter Duration"/> --}}
                                         </div>
-                                        <div class="form-group col-lg-6">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Billing Mode:</label>
                                             <select name="billing_mode" id="billing_mode" class="form-control form-select select">
-                                            <option value="">Per unit</option>
+                                            <option value="Per unit">Per unit</option>
+                                            <option value="Fixed Price">Fixed Price</option>
                                             </select>
                                         </div>
-                                        <div class="form-group col-lg-6">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Storage Mode:</label>
                                             <select name="storage_mode" id="storage_mode" class="form-control form-select select">
                                             <option value="">Select Storage Mode</option>
@@ -491,11 +524,11 @@
                                             @endforeach
                                             </select>
                                         </div>
-                                        <div class="form-group col-lg-6"></div>
-                                            <div class="form-group col-md-6">
+                                            <div class="form-group col-md-4">
                                                 <label for="Surveyor">Product Types:</label>
                                                 <select name="storage_product_type" id="storage_product_type" class="form-control form-select select">
                                                     <option value=""> Select Product Types</option>
+                                                    <option value="Storage">Storage</option>
                                                     {{-- @foreach ($services_required as $services)
                                                         <option value="{{ $services->name }}">
                                                             {{ $services->name }}
@@ -507,7 +540,7 @@
                                     </div>
                                 <div class="form-group" >
                                     <input type="checkbox" id="allowance_details" name="allowance_details" onchange="allowancevisibility()" value="0">
-                                        <label for="allowance_details"><b>Allowance:</b></label>
+                                        <label for="allowance_details"><b class="checkbox-color">Allowance:</b></label>
                                     </div>
                                     <div id="allowance_fields" class="hidden">
                                     <div class="row">
@@ -560,7 +593,7 @@
                                     </div>
                                     <div class="form-group" >
                                         <input type="checkbox" id="general_info_details" name="general_info_details" onchange="general_infovisibility()" value="0">
-                                            <label for="general_info_details"><b>General Information:</b></label>
+                                            <label for="general_info_details"><b class="checkbox-color">General Information:</b></label>
                                         </div>
                                     <div id="general_info_fields" class="hidden">
                                     <div class="row">
@@ -569,7 +602,7 @@
                                         <input type="radio" name="payment_by" id="self_payment" value="Self" checked>Self
                                         <input type="radio" name="payment_by" id="corporate_payment" value="Corporate"> Corporate
                                         </div>
-                                        <div class="form-group col-lg-12">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Source Of Contact:</label>
                                             <select name="sourcelead_id" id="sourcelead_id" class="form-control form-select select">
                                                 <option value=""> Select Source leads</option>
@@ -579,7 +612,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="form-group col-lg-12">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Enquiry Mode:</label>
                                             <select name="enquiry_mode" id="enquiry_mode" class="form-control form-select select">
                                                 <option value="">Select Enquiry Mode</option>
@@ -590,7 +623,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="form-group col-lg-12">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Status:</label>
                                             <select name="status_id" id="status_id" class="form-control form-select select" onchange="status(this.value)">
                                             <option value="">Select Status</option>
@@ -602,12 +635,12 @@
                                             </select>
                                             <input type="text" style="display: none;" name="completed_date" class="form-control" id="completed_date">
                                         </div>
-                                        <div class="form-group col-lg-12">
+                                        <div class="form-group col-lg-4">
                                             <label for="RMC">RMC:</label>
                                             <input type="text" name="rmc" id="rmc"
                                              class="form-control" placeholder="Enter RMC">
                                         </div>
-                                        <div class="form-group col-lg-12">
+                                        <div class="form-group col-lg-4">
                                             <label for="name">Assgn To:</label>
                                             <select name="assign_to" id="assign_to" class="form-control form-select select">
                                             <option value="">Assign To</option>
@@ -616,7 +649,7 @@
                                         <div class="col-md-12">
                                             <label for="sale_note">Sales Note:</label>
                                             <div class="form-group">
-                                               <textarea id="sales_notes" name="sales_notes" cols="50" rows="6"></textarea>
+                                               <textarea id="sales_notes" name="sales_notes" class="form-control" cols="50" rows="6"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -636,7 +669,7 @@
                                         </div>
                                     </div>
                                     </div>
-                                <div class="form-group col-lg-3">
+                               {{--  <div class="form-group col-lg-3">
                                     <label for="name">Inquiry</label>
                                     <select name="inquiry_type" id="inquiry_type" class="form-control"
                                         onchange="inquiry_data(this.value);">
@@ -694,7 +727,7 @@
                                         placeholder="Enter Volume" />
                                     <p class="form-error-text" id="volume_error" style="color: red;"></p>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="text-end mt-4 ">
                                 <a class="btn btn-primary" href="{{ route('followup.index') }}"> Cancel</a>
                                 <button class="btn btn-primary mb-1" type="button" disabled id="spinner_button"
@@ -727,6 +760,44 @@
         });
     </script> -->
 <script>
+
+            $(document).ready(function() {
+                $('#company_name_id').select2();
+                $('#customer_name').select2();
+            });
+
+            function getVendorDetails(agent_id){
+
+                var url = '{{ route('contact-person.agent') }}';
+                $.ajax({
+                        url: url,
+                        type: 'post',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": agent_id
+                        },
+                        success: function(response) {
+
+                            if (response.error) {
+                                alert(response.error);
+                            } else {
+                                // Populate the HTML for the contact person dropdown
+                                document.getElementById('agent_att_replace').innerHTML = response.html;
+
+                                // Populate other fields with the agent's data
+                                document.getElementById('customer_phone2').value = response.phone || '';
+                                document.getElementById('customer_phone1').value = response.mobile || '';
+                                document.getElementById('customer_email').value = response.email || '';
+                                document.getElementById('address').value = response.address || '';
+                            }
+                            // document.getElementById('agent_att_replace').innerHTML = response;
+                        }
+
+                });
+
+            }
+
+
            function clientvisibility() {
             const checkbox = document.getElementById('client_box');
             const container = document.getElementById('client_fields');
@@ -1151,19 +1222,19 @@
         }
         function agent_att_replace(id) {
             // alert(id);
-        var url = '{{ url('agent_att_replace') }}';
-        $.ajax({
-            url: url,
-            type: 'post',
-            data: {
-                "_token": "{{ csrf_token() }}",
-                "id": id
-            },
-            success: function(msg) {
-               document.getElementById('agent_att_replace').innerHTML = msg;
-            }
-});
-}
+            var url = '{{ url('agent_att_replace') }}';
+            $.ajax({
+                    url: url,
+                    type: 'post',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id
+                    },
+                    success: function(msg) {
+                    document.getElementById('agent_att_replace').innerHTML = msg;
+                    }
+            });
+        }
     </script>
    <script>
 function agent_att_data_replace(id) {

@@ -182,7 +182,7 @@ Route::middleware('auth')->group(function () {
     Route::post('get_quote', '\App\Http\Controllers\admin\FollowupController@get_quote')->name('get_quote');
 
 
-    Route::post('/agent_att_replace', [FollowupController::class,'agent_att_data'])->name('agent_att_replace');
+    Route::post('/contact-person', [FollowupController::class,'agent_att_data'])->name('contact-person.agent');
 
     Route::post('/agent_att_data_replace', [FollowupController::class,'agent_data_assign'])->name('agent_att_data_replace');
 

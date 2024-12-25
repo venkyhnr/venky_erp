@@ -51,3 +51,8 @@ INSERT INTO `permissions` (`id`, `pname`, `set_order`, `created_at`, `updated_at
 INSERT INTO `permissions` (`id`, `pname`, `set_order`, `created_at`, `updated_at`) VALUES (NULL, 'Duration', '21', NULL, NULL);
 
 ALTER TABLE `followups` CHANGE `frequency` `frequency` INT(11) NULL DEFAULT NULL, CHANGE `duration` `duration` INT(11) NULL DEFAULT NULL;
+
+24-12-2024
+--------------------------
+ALTER TABLE `followups` CHANGE `agent_id` `agent_id` INT(11) NULL DEFAULT NULL, CHANGE `attr_id` `attr_id` INT(11) NULL DEFAULT NULL;
+ALTER TABLE `followups` CHANGE `attr_id` `agent_attr_id` INT(11) NULL DEFAULT NULL;

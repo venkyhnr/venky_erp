@@ -96,6 +96,7 @@ class FollowupController extends Controller
         $data['enquiry_mode'] = DB::table('enquiry_mode')->get();
         $data['duration_data'] = Duration::all();
         $data['frequency_data'] = Frequency::all();
+        $data['organization_name'] = DB::table('agents')->where('is_approved',1)->get();
         return view('admin.add_followup',$data);
     }
     /**
@@ -107,13 +108,13 @@ class FollowupController extends Controller
     public function store(Request $request)
     {
         // echo"<pre>";print_r($request->all());echo"</pre>";exit;
-        $followup= new Followup;
-        if($request->agent_id !=''){
-            $data['agent_id']      = $request->agent_id;
-        }
-        if($request->attr_id !=''){
-            $data['attr_id']      = $request->attr_id;
-        }
+    $followup= new Followup;
+    if($request->agent_id !=''){
+        $data['agent_id']      = $request->agent_id;
+    }
+    if($request->agent_attr_id !=''){
+        $data['agent_attr_id']      = $request->agent_attr_id;
+    }
     $data['customer_type']      = $request->customer_type;
     $data['branch']      = $request->branch;
     $data['enquiry_date']      = date('Y-m-d', strtotime($request->enquiry_date));
@@ -125,12 +126,12 @@ class FollowupController extends Controller
     $data['company_name_id']      = $request->company_name_id;
     $data['company_name']      = $request->company_name;
     $data['title_rank']      = $request->title_rank;
-    $data['agent_attr_data']      = $request->agent_attr_data;
+    // $data['agent_attr_data']      = $request->agent_attr_data ?? "";
     $data['customer_name']      = $request->customer_name;
     $data['customer_phone1']      = $request->customer_phone1;
     $data['customer_phone2']      = $request->customer_phone2;
     $data['customer_email']      = $request->customer_email;
-    $data['salesman_id']      = $request->salesman_id ?? "";
+    // $data['salesman_id']      = $request->salesman_id ?? "";
     $data['address']      = $request->address;
     $data['associate']      = $request->associate;
     if($request->customer_form != ''){
@@ -222,10 +223,12 @@ class FollowupController extends Controller
     $data['added_date']      = date('Y-m-d');
     $id = DB::table('followups')->insertGetId($data);
     if($id !=""){
-        $datau['quote_no']      = 'QSR-'.$id;
+        $enquiryId = sprintf('%02d', $id);
+        $currentYear = date('Y');
+        $datau['quote_no']      = 'QSRENQ'.$currentYear.$enquiryId;
         DB::table('followups')->where('id',$id)->update($datau);
     }
-        return  redirect()->route('followup.index')->with('success', 'Inquiry  added successfully');
+        return  redirect()->route('followup.index')->with('success', 'Enquiry  added successfully');
     }
     /**
      * Display the specified resource.
@@ -261,6 +264,8 @@ class FollowupController extends Controller
         $data['enquiry_mode'] = DB::table('enquiry_mode')->get();
         $data['duration_data'] = Duration::all();
         $data['frequency_data'] = Frequency::all();
+        $data['organization_name'] = DB::table('agents')->where('is_approved',1)->get();
+        $data['agent_data'] = DB::table('agents_attribute')->where('agent_id',$followup->agent_id)->get();
         return view('admin.edit_followup',compact('followup'),$data);
     }
     /**
@@ -273,6 +278,12 @@ class FollowupController extends Controller
     public function update(Request $request, $id)
     {
         $followup = Followup::find($id);
+        if($request->agent_id !=''){
+            $followup->agent_id     = $request->agent_id;
+        }
+        if($request->agent_attr_id !=''){
+            $followup->agent_attr_id = $request->agent_attr_id;
+        }
         $followup->quote_no= $request->quote_no;
         $followup->customer_type= $request->customer_type;
         $followup->branch= $request->branch;
@@ -282,15 +293,16 @@ class FollowupController extends Controller
         }else{
             $followup->client_box      = '1';
         }
-        $followup->company_name_id      = $request->company_name_id; $followup->company_name      = $request->company_name;
+        $followup->company_name_id      = $request->company_name_id;
+        $followup->company_name      = $request->company_name;
         // $followup->company_name      = $request->search_company;
         $followup->title_rank      = $request->title_rank;
-        $followup->agent_attr_data      = $request->agent_attr_data;
+        // $followup->agent_attr_data      = $request->agent_attr_data ?? "";
         $followup->customer_name      = $request->customer_name;
         $followup->customer_phone1      = $request->customer_phone1;
         $followup->customer_phone2      = $request->customer_phone2;
         $followup->customer_email      = $request->customer_email;
-        $followup->salesman_id      = $request->salesman_id ?? "";
+        // $followup->salesman_id      = $request->salesman_id ?? "";
         $followup->address      = $request->address;
         $followup->associate      = $request->associate;
         if($request->customer_form != ''){
@@ -385,7 +397,7 @@ class FollowupController extends Controller
         $followup->volume         = $request->volume;
         $followup->added_date     = date('Y-m-d');
         $followup->save();
-        return  redirect()->route('followup.index')->with('success', 'Inquiry updated successfully');
+        return  redirect()->route('followup.index')->with('success', 'Enquiry updated successfully');
     }
     /**
      * Remove the specified resource from storage.
@@ -397,7 +409,7 @@ class FollowupController extends Controller
     {
         $delete_id = $request->selected;
         DB::table('followups')->whereIn('id',$delete_id)->delete();
-        return redirect()->route('followup.index')->with('success','Inquiry deleted successfully.');
+        return redirect()->route('followup.index')->with('success','Enquiry deleted successfully.');
     }
     function followup_form(){
         $data['inquiry_id'] = $_POST['inquiry_id'];
@@ -443,7 +455,7 @@ class FollowupController extends Controller
 // dd($sql);exit;
         //echo "<pre>";print_r($data);echo"</pre>";exit;
         //return Excel::download(new Reportexcelclass($data), 'filtered_data.xlsx');
-        $customHeadings = ['Quote No', 'Source Lead','Local/Storage/Export','Salesman Name','Inquiry Date','Move Date','Volume','Customer Name','Customer Email','Customer phone','origin','Destination'];
+        $customHeadings = ['Quote No', 'Source Lead','Local/Storage/Export','Salesman Name','Enquiry Date','Move Date','Volume','Customer Name','Customer Email','Customer phone','origin','Destination'];
        // $customValues = ['Custom Value 1', 'Custom Value 2'];
        // $customValues = $data->pluck('quote_no','sourcelead_id')->toArray();
         return Excel::download(new Reportexcelclass($data, $customHeadings, null), 'filtered_data.xlsx');
@@ -453,7 +465,7 @@ class FollowupController extends Controller
         $id = $_POST['inquiry_id'];
         $data['status'] = $_POST['inquiry_status'];
         DB::table('followups')->where('id',$id)->update($data);
-        return  redirect()->route('followup.index')->with('success', 'Inquiry updated successfully');
+        return  redirect()->route('followup.index')->with('success', 'Enquiry updated successfully');
     }
     function surveyor_form(Request $request,$id){
         // echo"<pre>";
@@ -1191,21 +1203,79 @@ public function add_repeated_inq(Request $request)
         $datau['quote_no']      = 'QSR-'.$id;
         DB::table('followups')->where('id',$id)->update($datau);
     }
-    return  redirect()->route('followup.index')->with('success', 'Inquiry  added successfully');
+    return  redirect()->route('followup.index')->with('success', 'Enquiry  added successfully');
 }
 function agent_att_data() {
     $id = $_POST['id'];
-    $data = DB::table('agents_attribute')->where('agent_id', $id)
-             ->orderBy('id', 'desc')->get();
-    $html = "<select class='form-control' id='agent_att_id' name='agent_att_id' onchange=\"agent_att_data_replace(this.value);\">";
-    $html .= "<option value=''>Select Agent Attribute</option>";
-    if ($data != '' && count($data) > 0) {
-        for ($i = 0; $i < count($data); $i++) {
-            $html .= "<option value='" . $data[$i]->id . "'>Name-" . $data[$i]->name . ", Position-" . $data[$i]->role . "</option>";
+    $agent_data = DB::table('agents')->where('id',$id)->first();
+    if ($agent_data) {
+
+        $country = "";
+        $state = "";
+        $city = "";
+        $z_code = "";
+
+        $phone = $agent_data->phone;
+        $mobile = $agent_data->company_telephone;
+        $email = $agent_data->company_email;
+        $address = $agent_data->address;
+        // Check and assign country
+        if ($agent_data->country != "" && !empty($agent_data->country)) {
+            $country = $agent_data->country;
         }
+
+        // Check and assign state
+        if ($agent_data->state != "" && !empty($agent_data->state)) {
+            $state = $agent_data->state;
+        }
+
+        // Check and assign city
+        if ($agent_data->city != "" && !empty($agent_data->city)) {
+            $city = $agent_data->city;
+        }
+
+        // Check and assign ZIP code
+        if ($agent_data->z_code != "" && !empty($agent_data->z_code)) {
+            $z_code = $agent_data->z_code;
+        }
+
+        // Construct full address
+        $fullAddress = $address;
+        if (!empty($city)) {
+            $fullAddress .= ', ' . $city;
+        }
+        if (!empty($state)) {
+            $fullAddress .= ', ' . $state;
+        }
+        if (!empty($country)) {
+            $fullAddress .= ', ' . $country;
+        }
+        if (!empty($z_code)) {
+            $fullAddress .= ' - ' . $z_code;
+        }
+        $data = DB::table('agents_attribute')->where('agent_id', $id)
+                ->orderBy('id', 'desc')->get();
+        $html = "<select class='form-control select' id='agent_attr_id' name='agent_attr_id'>";
+        $html .= "<option value=''>Select Contact Person</option>";
+        if ($data != '' && count($data) > 0) {
+            for ($i = 0; $i < count($data); $i++) {
+                $html .= "<option value='" . $data[$i]->id . "'> " . $data[$i]->name . " ( " . $data[$i]->role . " ) </option>";
+            }
+        }
+        $html .= "</select>";
+
+        return response()->json([
+            'html' => $html,
+            'phone' => $phone,
+            'mobile' => $mobile,
+            'email' => $email,
+            'address' => $fullAddress
+        ]);
+    } else {
+        return response()->json([
+            'error' => 'Organization not found',
+        ]);
     }
-    $html .= "</select>";
-    echo $html;
 }
 function agent_data_assign() {
     $id = $_POST['id'];
